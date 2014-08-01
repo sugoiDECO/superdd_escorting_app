@@ -1,0 +1,27 @@
+%h2
+  = @user.name
+  班
+%ul.nav.nav-tabs{role: "tablist"}
+  %li
+    %a{href: "?"} 未通知のタスク
+  %li
+    %a{href: "?state=published"} 通知済みのタスク
+  %li.active
+    %a{href: "?state=skipped"} スキップしたタスク
+%p
+  -#%p
+    %button.btn.btn-primary.btn-lg{type: "button"} 次のタスクを通知する
+  %table.table.table-striped
+    %tr
+      %th ID
+      %th タイトル
+      %th 説明
+      %th 操作
+    - @tasks.each do |t|
+      %tr
+        %td= t.identifier
+        %td= t.subject
+        %td= t.discussion
+        %td
+          %button.btn.btn-default{type: "button"} スキップ解除
+

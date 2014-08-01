@@ -1,0 +1,9 @@
+%h2 班一覧
+%p
+  %table.table.table-striped
+    - @users.each do |user|
+      %tr
+        %td
+          %a{:href => "/groups/#{user.id}/tasks"}
+            =user.name
+            班

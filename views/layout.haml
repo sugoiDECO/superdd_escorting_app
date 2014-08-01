@@ -1,0 +1,20 @@
+!!!
+%html{lang: "en"}
+  %head
+    %meta{charset: "utf-8"}/
+    %meta{content: "IE=edge", "http-equiv" => "X-UA-Compatible"}/
+    %meta{content: "width=device-width, initial-scale=1", name: "viewport"}/
+    %title すごい避難訓練
+    %link{:rel => 'stylesheet', :href => '//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css', :media => 'screen'}
+    -#%link{:rel => 'stylesheet', :href => '//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css'}
+  %body
+    .header
+      %h1
+        %a{:href => '/'} すごい避難訓練
+    .container
+      = yield
+
+    %script{src: "https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"}
+    %script{src: '//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js'}
+    %script{src: '/javascript/main.js'}
+

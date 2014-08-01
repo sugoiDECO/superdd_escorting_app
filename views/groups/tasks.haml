@@ -1,0 +1,33 @@
+%h2
+  = @user.name
+  班
+%ul.nav.nav-tabs{role: "tablist"}
+  %li.active
+    %a{href: "#"} 未通知のタスク
+  %li
+    %a{href: "?state=published"} 通知済みのタスク
+  %li
+    %a{href: "?state=skipped"} スキップしたタスク
+%p
+  %p
+    - if next_task = @tasks[0]
+      %form{:method => 'POST', :action => "/tasks/#{next_task.id}/publish", :onSubmit => "return confirmPublishing(\"#{next_task.identifier} #{next_task.subject}\")"}
+        %input{type: "hidden", name: 'redirect', value: "/groups/#{@user.id}/tasks"}/
+        %input.btn.btn-primary.btn-lg{type: "submit", value: "次のタスクを通知する"}/
+    - else
+      %button.btn.btn-primary.btn-lg{type: "button", disabled: 'disabled'} 次のタスクを通知する
+  %table.table.table-striped
+    %tr
+      %th ID
+      %th タイトル
+      %th 説明
+      %th 操作
+    - @tasks.each do |t|
+      %tr
+        %td= t.identifier
+        %td= t.subject
+        %td= t.discussion
+        %td
+          %button.btn.btn-default{type: "button"} スキップ
+          -#%button.btn.btn-default{type: "button"} スキップ解除
+
