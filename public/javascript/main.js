@@ -6,3 +6,12 @@ var confirmPublishing = function(str) {
     return false;
   }
 };
+
+var confirmSkipping = function(str) {
+  if(window.confirm("「" + str + "」をスキップしますか？")){
+    return true;
+  }
+  else{
+    return false;
+  }
+};

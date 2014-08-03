@@ -174,6 +174,20 @@ class Task
     end
     return true if response.status == 200
   end
+
+  def skip
+    response = @@put_conn.put do |req|
+      req.url "/issues/#{@id}.json"
+      req.headers['Content-Type'] = 'application/json'
+      req.body = { 
+        :issue => {
+          :status_id => 6
+        },
+        :key => SHIRASETE_API_KEY
+      }.to_json
+    end
+    return true if response.status == 200
+  end
 end
 
 use Rack::Auth::Basic do |username, password|
@@ -197,6 +211,18 @@ get '/groups/:id/tasks' do
   else
     haml :'groups/tasks'
   end
+end
+
+post '/tasks/:id/skip' do
+  task = Task.find(params[:id])
+  task.skip
+  redirect to(params[:redirect])
+end
+
+post '/tasks/:id/unskip' do
+  task = Task.find(params[:id])
+  task.unskip
+  redirect to(params[:redirect])
 end
 
 post '/tasks/:id/push' do

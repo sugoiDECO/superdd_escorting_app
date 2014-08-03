@@ -9,25 +9,28 @@
   %li
     %a{href: "?state=skipped"} スキップしたタスク
 %p
-  %p
-    - if next_task = @tasks[0]
+  - if next_task = @tasks[0]
+    %p
       %form{:method => 'POST', :action => "/tasks/#{next_task.id}/publish", :onSubmit => "return confirmPublishing(\"#{next_task.identifier} #{next_task.subject}\")"}
         %input{type: "hidden", name: 'redirect', value: "/groups/#{@user.id}/tasks"}/
         %input.btn.btn-primary.btn-lg{type: "submit", value: "次のタスクを通知する"}/
-    - else
+    %p
+      %form{:method => 'POST', :action => "/tasks/#{next_task.id}/skip", :onSubmit => "return confirmSkipping(\"#{next_task.identifier} #{next_task.subject}\")"}
+        %input{type: "hidden", name: 'redirect', value: "/groups/#{@user.id}/tasks"}/
+        %input.btn.btn-danger{type: "submit", value: "次のタスクをスキップ"}/
+  - else
+    %p
       %button.btn.btn-primary.btn-lg{type: "button", disabled: 'disabled'} 次のタスクを通知する
+    %p
+      %button.btn.btn-danger{type: "button", disabled: 'disabled'} 次のタスクをスキップ
   %table.table.table-striped
     %tr
       %th ID
       %th タイトル
       %th 説明
-      %th 操作
     - @tasks.each do |t|
       %tr
         %td= t.identifier
         %td= t.subject
         %td= t.discussion
-        %td
-          %button.btn.btn-default{type: "button"} スキップ
-          -#%button.btn.btn-default{type: "button"} スキップ解除
 
