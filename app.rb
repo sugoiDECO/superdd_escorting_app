@@ -92,7 +92,7 @@ class Task
     #faraday.response :json
   end
 
-  attr_reader :id, :subject, :identifier, :published, :action, :way, :discussion
+  attr_reader :id, :subject, :identifier, :published, :action, :way, :discussion, :assigned_to_id
 
   def self.all(user, state)
     request_params = {
@@ -132,6 +132,9 @@ class Task
   def initialize(issue)
     @id = issue['id']
     @subject = issue['subject']
+    if assigned_to = issue['assigned_to']
+      @assigned_to_id = assigned_to['id']
+    end
     custom_fields = issue['custom_fields']
     custom_fields.each do |custom_field|
       id = custom_field['id']
@@ -197,7 +200,9 @@ get '/groups/:id/tasks' do
 end
 
 post '/tasks/:id/push' do
-
+  task = Task.find(params[:id])
+  push(task)
+  redirect to(params[:redirect])
 end
 
 post '/tasks/:id/publish' do
@@ -205,9 +210,18 @@ post '/tasks/:id/publish' do
   task = Task.find(params[:id])
   task.publish
   data = {:alert => "#{task.identifier} #{task.subject}", :sound => ''}
-  push = Parse::Push.new(data)
-  push.where = {}
+  channel = "channel_#{task.assigned_to_id}"
+  p channel
+  push = Parse::Push.new(data, channel)
+  #push.where = {}
   push.save
   redirect to(params[:redirect])
+end
+
+def push(task)
+  data = {:alert => "#{task.identifier} #{task.subject}", :sound => ''}
+  channel = "channel_#{task.assigned_to_id}"
+  push = Parse::Push.new(data, channel)
+  push.save
 end
 
