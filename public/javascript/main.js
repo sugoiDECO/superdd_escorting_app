@@ -15,3 +15,13 @@ var confirmSkipping = function(str) {
     return false;
   }
 };
+
+var confirmPushing = function(str) {
+  if(window.confirm("「" + str + "」を再度通知しますか？")){
+    return true;
+  }
+  else{
+    return false;
+  }
+};
+

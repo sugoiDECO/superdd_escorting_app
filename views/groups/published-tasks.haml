@@ -9,8 +9,14 @@
   %li
     %a{href: "?state=skipped"} スキップしたタスク
 %p
-  %p
-    %button.btn.btn-primary.btn-lg{type: "button"} 現在のタスクを再度通知する 
+  - if current_task = @tasks[0]
+    %p
+      %form{:method => 'POST', :action => "/tasks/#{current_task.id}/push", :onSubmit => "return confirmPushing(\"#{current_task.identifier} #{current_task.subject}\")"}
+        %input{type: "hidden", name: 'redirect', value: "/groups/#{@user.id}/tasks?state=published"}/
+        %input.btn.btn-primary.btn-lg{type: "submit", value: "現在のタスクを再度通知する"}/
+  - else
+    %p
+      %button.btn.btn-primary.btn-lg{type: "button", disabled: "disabled"} 現在のタスクを再度通知する
   %table.table.table-striped
     %tr
       %th ID

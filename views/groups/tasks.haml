@@ -12,6 +12,7 @@
   - if next_task = @tasks[0]
     %p
       %form{:method => 'POST', :action => "/tasks/#{next_task.id}/publish", :onSubmit => "return confirmPublishing(\"#{next_task.identifier} #{next_task.subject}\")"}
+        %input{type: "hidden", name: 'user_id', value: @user.id}/
         %input{type: "hidden", name: 'redirect', value: "/groups/#{@user.id}/tasks"}/
         %input.btn.btn-primary.btn-lg{type: "submit", value: "次のタスクを通知する"}/
     %p

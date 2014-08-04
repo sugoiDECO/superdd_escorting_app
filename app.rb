@@ -31,32 +31,6 @@ USERS = {
 
 Parse.init(:application_id => PARSE_APPLICATION_ID, :api_key => PARSE_API_KEY)
 
-#class User
-#  @@get_conn = Faraday.new(:url => SHIRASETE_BASE_URL) do |faraday|
-#    faraday.adapter Faraday.default_adapter
-#    faraday.response :logger
-#    faraday.response :json
-#  end
-#
-#  attr_reader :name, :id
-#
-#  def self.all
-#    response = @@get_conn.get "/projects/#{SHIRASETE_PROJECT_ID}/memberships.json", {:key => SHIRASETE_API_KEY}
-#    body = response.body
-#    p body['memberships']
-#  end
-#
-#  def self.find(user_id)
-#    response = @@get_conn.get "/users/#{user_id}.json", {:key => SHIRASETE_API_KEY}
-#    body = response.body
-#    p body['user']
-#  end
-#
-#  def initialize(user_hash)
-#
-#  end
-#end
-
 class User
   attr_reader :id, :name
 
@@ -188,11 +162,27 @@ class Task
     end
     return true if response.status == 200
   end
+
+  def set_resolved
+    response = @@put_conn.put do |req|
+      req.url "/issues/#{@id}.json"
+      req.headers['Content-Type'] = 'application/json'
+      req.body = { 
+        :issue => {
+          :status_id => 3
+        },
+        :key => SHIRASETE_API_KEY
+      }.to_json
+    end
+    return true if response.status == 200
+  end
 end
 
 use Rack::Auth::Basic do |username, password|
   username == ENV['USERNAME'] && password == ENV['PASSWORD']
 end
+
+enable :sessions
 
 get '/' do
   @users = User.all
@@ -232,15 +222,21 @@ post '/tasks/:id/push' do
 end
 
 post '/tasks/:id/publish' do
-  puts "task: #{params[:id]}"
+  published_tasks = Task.all(User.find(params[:user_id]), 'published')
+  if published_tasks.count > 0
+    last_task = published_tasks.first
+    last_task.set_resolved
+  end
+
   task = Task.find(params[:id])
   task.publish
+
   data = {:alert => "#{task.identifier} #{task.subject}", :sound => ''}
   channel = "channel_#{task.assigned_to_id}"
   p channel
   push = Parse::Push.new(data, channel)
-  #push.where = {}
   push.save
+
   redirect to(params[:redirect])
 end
 
